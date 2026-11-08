@@ -1,0 +1,23 @@
+services:
+  tika-proxy:
+    build:
+      context: ./tika-proxy
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      TIKA_AUTH_TOKEN: ${TIKA_AUTH_TOKEN}
+      TIKA_UPSTREAM_URL: http://tika:9998
+      TIKA_UPSTREAM_TIMEOUT_MS: ${TIKA_UPSTREAM_TIMEOUT_MS:-12000}
+      POSTHOG_KEY: ${POSTHOG_KEY}
+      POSTHOG_HOST: ${POSTHOG_HOST}
+      POSTHOG_SERVICE_NAME: tika-proxy
+    depends_on:
+      - tika
+
+  tika:
+    image: apache/tika:${TIKA_IMAGE_TAG:-3.2.3.0}
+    expose:
+      - "9998"

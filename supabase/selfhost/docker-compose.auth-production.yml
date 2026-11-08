@@ -1,0 +1,20 @@
+services:
+  auth:
+    depends_on:
+      templates-server:
+        condition: service_started
+    environment:
+      GOTRUE_MAILER_TEMPLATES_CONFIRMATION: http://templates-server/confirm-signup.html
+      GOTRUE_MAILER_SUBJECTS_CONFIRMATION: Подтвердите email в hiiire
+      GOTRUE_MAILER_TEMPLATES_RECOVERY: http://templates-server/reset-password.html
+      GOTRUE_MAILER_SUBJECTS_RECOVERY: Восстановление пароля hiiire
+      GOTRUE_MAILER_TEMPLATES_EMAIL_CHANGE: http://templates-server/change-email.html
+      GOTRUE_MAILER_SUBJECTS_EMAIL_CHANGE: Подтвердите новый email в hiiire
+
+  templates-server:
+    image: caddy:2-alpine
+    container_name: supabase-auth-templates
+    restart: unless-stopped
+    command: ["caddy", "file-server", "-r", "/templates", "--listen", ":80"]
+    volumes:
+      - ./volumes/templates:/templates:ro

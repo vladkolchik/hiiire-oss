@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="supported-color-schemes" content="light dark"/>
+  <title>Подтвердите регистрацию</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f7f8;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;mso-hide:all;">
+    Подтвердите регистрацию в hiiire.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#f6f7f8;">
+    <tr>
+      <td align="center" style="padding:28px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;width:100%;max-width:600px;background:#ffffff;border:1px solid #e7e7ea;border-radius:16px;overflow:hidden;">
+          <tr>
+            <td style="height:6px;background:linear-gradient(90deg,#0b0b0c 0%, #2b2b30 100%);line-height:6px;font-size:0;">&nbsp;</td>
+          </tr>
+
+          <tr>
+            <td style="padding:22px 22px 8px 22px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+              <div style="font-weight:800;letter-spacing:-0.02em;font-size:22px;line-height:1.2;color:#0b0b0c;">hiiire</div>
+              <div style="margin-top:6px;font-size:13px;line-height:1.6;color:#6b7280;">Умный подбор персонала с AI</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:10px 22px 0 22px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+              <h1 style="margin:0;font-size:18px;line-height:1.35;color:#0b0b0c;">Подтвердите регистрацию</h1>
+              <p style="margin:10px 0 0 0;font-size:14px;line-height:1.7;color:#374151;">
+                Мы получили регистрацию на email <b style="color:#0b0b0c;">{{ .Email }}</b>. Подтвердите адрес, чтобы завершить вход.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:18px 22px 10px 22px;">
+              <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next=/dashboard" style="display:inline-block;background:#0b0b0c;color:#ffffff;text-decoration:none;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:14px;line-height:1;padding:12px 16px;border-radius:12px;font-weight:700;">
+                Подтвердить email
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:6px 22px 0 22px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+              <p style="margin:0;font-size:12.5px;line-height:1.7;color:#6b7280;">Или перейдите по ссылке:</p>
+              <p style="margin:8px 0 0 0;font-size:12.5px;line-height:1.6;color:#6b7280;word-break:break-all;">
+                <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next=/dashboard" style="color:#111827;text-decoration:underline;">
+                  {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email&amp;next=/dashboard
+                </a>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:16px 22px 20px 22px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:12px;line-height:1.7;color:#9ca3af;">
+              © hiiire · <a href="{{ .SiteURL }}" style="color:#6b7280;text-decoration:underline;">{{ .SiteURL }}</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

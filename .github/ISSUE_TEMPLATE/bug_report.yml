@@ -1,0 +1,52 @@
+name: Баг
+description: Что-то работает не так, как ожидалось
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Уязвимости не публикуйте здесь — см. SECURITY.md.
+        Не прикладывайте реальные персональные данные кандидатов, токены и содержимое `.env`.
+  - type: textarea
+    id: what
+    attributes:
+      label: Что произошло
+      description: Коротко опишите проблему.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги воспроизведения
+      placeholder: |
+        1. Открыть /dashboard/candidates
+        2. Нажать «Добавить кандидата»
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидаемое и фактическое поведение
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Где воспроизводится
+      options:
+        - hiiire.com
+        - Своя (self-hosted) инсталляция
+        - Локальная разработка
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit / версия
+      description: Для self-hosted и локальной разработки — хеш коммита.
+  - type: textarea
+    id: env
+    attributes:
+      label: Окружение и логи
+      description: Браузер / устройство, ошибки из консоли или Network (без секретов), скриншоты.

@@ -1,0 +1,3 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+0 9 * * * root flock -n /run/hiiire-production-cron.lock /opt/hiiire-cron/run.sh >> /var/log/hiiire-production-cron.log 2>&1

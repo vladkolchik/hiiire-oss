@@ -1,0 +1,64 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/telegram-relay/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+/.playwright-mcp/
+/playwright-report/
+/test-results/
+
+# next.js
+/.next/
+/.next/cache/
+/out/
+/telegram-relay/dist
+
+# local caches
+/.cache/
+.eslintcache
+.eslintcache*
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# old module
+/old_module
+.claude/settings.local.json
+.tmp-next-start-out.log
+.tmp-next-start-err.log
+.tmp-dev-out.log
+.tmp-dev-err.log
+.tmp-dev-err-20260224-182201-756.log
+.worktrees/
+/--cache-location/
+/.superpowers
+*.log
+
+# open-source export: personal literals checked by scripts/open-source/export.mjs
+/scripts/open-source/denylist.local.txt
