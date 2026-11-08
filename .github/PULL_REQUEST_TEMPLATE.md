@@ -1,19 +1,19 @@
-## Что изменилось
+## What changed
 
-<!-- Коротко: что и зачем. Ссылка на issue, если есть: Closes #... -->
+<!-- Briefly: what and why. Link the issue if there is one: Closes #... -->
 
-## Как проверено
+## How it was tested
 
 - [ ] `npm run lint`
-- [ ] тесты (`node --no-warnings --experimental-strip-types --test tests/*.test.mts` или нужные `npm run test:*`)
+- [ ] tests (`node --no-warnings --experimental-strip-types --test tests/*.test.mts` or the relevant `npm run test:*`)
 - [ ] `npm run build`
-- [ ] вручную в браузере (desktop и мобильная ширина), если менялся UI
+- [ ] manually in a browser (desktop and mobile width), if the UI changed
 
-## Чек-лист
+## Checklist
 
-- [ ] PR открыт в `dev`
-- [ ] пограничные случаи продуманы: пустые данные, ошибки API/сети, повторные действия, длинный ввод
-- [ ] тексты ошибок и подсказок понятны конечному пользователю, без технических деталей
-- [ ] если менялась схема БД — новая миграция в `supabase/migrations/`, обновлены `docs/DATABASE_SCHEMA.md` и типы
-- [ ] если менялись поведение, API или env — обновлены `docs/technical-reference.md` / DEPLOYMENT.md / `.env.example` (и оба README, если изменился обзор проекта)
-- [ ] в коде, тестах и скриншотах нет секретов и реальных персональных данных
+- [ ] the pull request targets `dev`
+- [ ] edge cases are covered: empty data, API/network errors, repeated actions, long input
+- [ ] error messages and hints are clear to end users, with no technical details
+- [ ] if the database schema changed: a new migration in `supabase/migrations/`, updated `docs/DATABASE_SCHEMA.md` and types
+- [ ] if behaviour, the API or env changed: updated `docs/technical-reference.md`, the deployment guide and `.env.example` (and the README if the project overview changed); both language versions of a document are updated
+- [ ] no secrets or real personal data in code, tests or screenshots

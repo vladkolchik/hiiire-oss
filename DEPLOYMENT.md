@@ -1,15 +1,17 @@
-# 🚀 Deployment Guide - hiiire.com на Timeweb Cloud App (RU-friendly)
+# 🚀 Deploying hiiire on Timeweb Cloud App
 
-Этот проект разворачивается как отдельные приложения из одного репозитория:
+**English** | [Русский](./DEPLOYMENT.ru.md)
 
-- **`hiiire-web`**: Next.js приложение (UI + `app/api/*`)
-- **`hiiire-worker`**: фоновый worker для очереди AI задач (`jobs_ai`)
-- **`hiiire-tika`**: отдельный Docker Compose app для извлечения текста из файлов резюме (Node/Fastify proxy + `apache/tika`)
-- **`hiiire-telegram-relay`**: standalone Telegram webhook/send relay for `tg.hiiire.com`, deployed outside Russia.
+The project is deployed as separate apps from a single repository:
 
-Это даёт стабильную обработку анализа резюме: пользователь может закрыть вкладку/потерять интернет — результат всё равно появится, потому что анализ выполняется worker’ом.
+- **`hiiire-web`**: the Next.js app (UI + `app/api/*`)
+- **`hiiire-worker`**: the background worker for the AI job queue (`jobs_ai`)
+- **`hiiire-tika`**: a separate Docker Compose app that extracts text from resume files (Node/Fastify proxy + `apache/tika`)
+- **`hiiire-telegram-relay`**: a standalone Telegram webhook/send relay for `tg.hiiire.com`, deployed outside Russia.
 
-`hiiire-web` можно разворачивать либо текущим non-compose способом Timeweb App, либо через отдельный `Dockerfile.web`. `hiiire-worker` пока остаётся на non-compose настройках Timeweb App. `hiiire-tika` разворачивается отдельно через Docker Compose. `hiiire-telegram-relay` разворачивается отдельным Dockerfile-based Timeweb App.
+This keeps resume analysis reliable: the user can close the tab or lose their connection and the result still appears, because the analysis runs in the worker.
+
+`hiiire-web` can be deployed either with the regular (non-compose) Timeweb App settings or from the separate `Dockerfile.web`. `hiiire-worker` still uses the regular (non-compose) Timeweb App settings. `hiiire-tika` is deployed separately with Docker Compose. `hiiire-telegram-relay` is deployed as a separate Dockerfile-based Timeweb App.
 
 ---
 
@@ -21,7 +23,7 @@
 
 ### Docker image (optional)
 
-Для Docker-hosting/VPS/Coolify можно собрать отдельный production image для web-приложения:
+For Docker hosting, a VPS or Coolify you can build a separate production image of the web app:
 
 ```bash
 docker build \
@@ -34,7 +36,7 @@ docker build \
   .
 ```
 
-Запуск:
+Run it:
 
 ```bash
 docker run --rm \
@@ -43,21 +45,21 @@ docker run --rm \
   hiiire-web
 ```
 
-`Dockerfile.web` использует Next.js standalone output и запускает сгенерированный `server.js` на `0.0.0.0:3000`. `NEXT_PUBLIC_SUPABASE_URL` и `NEXT_PUBLIC_SUPABASE_ANON_KEY` обязательны на этапе `docker build`; остальные `NEXT_PUBLIC_*` build args опциональны. Браузерная часть Next.js встраивает public env в bundle. Эти же значения нужно передать в runtime env, потому что server/API routes тоже читают Supabase/PostHog env во время работы.
+`Dockerfile.web` uses the Next.js standalone output and runs the generated `server.js` on `0.0.0.0:3000`. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required at `docker build` time; the other `NEXT_PUBLIC_*` build args are optional. The browser part of Next.js embeds public env into the bundle. Pass the same values to the runtime env too, because server and API routes also read the Supabase and PostHog env at runtime.
 
-Контейнерный healthcheck проверяет `GET /api/health`.
+The container healthcheck calls `GET /api/health`.
 
-Корневой `docker-compose.yml` не используется для `hiiire-web`: он остаётся отдельным compose-deploy для `hiiire-tika`.
+The root `docker-compose.yml` is not used for `hiiire-web`: it remains a separate compose deployment for `hiiire-tika`.
 
 ### Environment variables
-Минимум:
+Minimum:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ```
 
-Для режима Supabase + async AI (обязательно, т.к. `app/api/*` создаёт jobs и вакансии server-side):
+For Supabase + async AI (required, because `app/api/*` creates jobs and vacancies on the server):
 
 ```env
 SUPABASE_SERVICE_ROLE_KEY=... # server-only
@@ -65,23 +67,23 @@ AUTH_VERIFICATION_CONTEXT_SECRET=... # server-only, strongly recommended for ver
 APP_ORIGIN=https://your-production-domain.com # optional, but recommended when app runs behind reverse proxy
 ```
 
-> Рекомендуется задать `AUTH_VERIFICATION_CONTEXT_SECRET` отдельным длинным случайным секретом.  
-> Если переменная не задана, приложение использует fallback на `SUPABASE_SERVICE_ROLE_KEY`.
+> Set `AUTH_VERIFICATION_CONTEXT_SECRET` to its own long random secret.
+> If it is not set, the app falls back to `SUPABASE_SERVICE_ROLE_KEY`.
 
 ### PostHog analytics (optional)
 
-Для продуктовой аналитики и server error tracking:
+For product analytics and server error tracking:
 
 ```env
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
 NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-Если `NEXT_PUBLIC_POSTHOG_KEY` не задан, приложение работает без PostHog. Server-side ошибки Next.js отправляются через `instrumentation.ts`; request headers не передаются в PostHog.
+If `NEXT_PUBLIC_POSTHOG_KEY` is not set, the app works without PostHog. Next.js server-side errors are sent through `instrumentation.ts`; request headers are not sent to PostHog.
 
 ### Resume extraction through Tika
 
-Для загрузки резюме файлом после Tika rollout web-приложению нужен доступ к защищённому Tika proxy:
+To upload resume files, the web app needs access to the protected Tika proxy:
 
 ```env
 TIKA_BASE_URL=https://your-tika-proxy.example.com
@@ -89,15 +91,15 @@ TIKA_AUTH_TOKEN=...            # server-only, must match the proxy token
 TIKA_TIMEOUT_MS=20000          # optional; keep greater than proxy TIKA_UPSTREAM_TIMEOUT_MS
 ```
 
-Web app отправляет файл в Tika proxy, получает plain text и сохраняет его в `candidates.resume_text`. Если пользователь сохраняет оригинальный файл, он по-прежнему хранится в Supabase Storage; Tika не заменяет storage и не имеет доступа к БД.
+The web app sends the file to the Tika proxy, receives plain text and stores it in `candidates.resume_text`. If the user keeps the original file, it is still stored in Supabase Storage; Tika does not replace storage and has no access to the database.
 
-Ограничения загрузки после Tika rollout остаются формато-независимыми: файл до 5 MB, извлечённый текст до 50,000 символов / 8,000 слов, минимум 20 символов, timeout web-запроса и timeout upstream-запроса proxy. Web timeout должен быть больше proxy upstream timeout, чтобы proxy успевал вернуть классифицированный `504`/`503`, а web не обрывал запрос раньше. Старый PDF-only лимит на количество страниц не применяется.
+Upload limits are the same for every format: files up to 5 MB, extracted text up to 50,000 characters / 8,000 words, at least 20 characters, plus the web request timeout and the proxy upstream timeout. The web timeout must be greater than the proxy upstream timeout, so that the proxy can return a classified `504`/`503` before the web app aborts the request. The old PDF-only page limit no longer applies.
 
-Для сохранения `.doc` файлов bucket `resumes` должен включать `application/msword` в `allowed_mime_types`. Это проверяется и обновляется через Supabase MCP после сверки MCP `project_ref` с `NEXT_PUBLIC_SUPABASE_URL`; SQL или ручные обходные изменения для bucket-настроек не используются.
+To store `.doc` files, the `resumes` bucket must include `application/msword` in `allowed_mime_types`. This is checked and updated through Supabase MCP after verifying that the MCP `project_ref` matches `NEXT_PUBLIC_SUPABASE_URL`; bucket settings are not changed with ad hoc SQL or manual workarounds.
 
 ### Telegram bot (webhook-only)
 
-Если используете Telegram-бота для уведомлений/рассылки:
+If you use the Telegram bot for notifications and broadcasts:
 
 ```env
 TELEGRAM_BOT_TOKEN=...         # server-only
@@ -110,7 +112,7 @@ TELEGRAM_RELAY_SECRET=...      # server-only
 # Or proxy mode; do not set it together with relay variables:
 # TELEGRAM_PROXY_URL=http://user:password@proxy.example.com:8080 # server-only
 TELEGRAM_REQUEST_TIMEOUT_MS=8000
-CRON_SECRET=...                # server-only (для /api/cron/*)
+CRON_SECRET=...                # server-only (for /api/cron/*)
 ```
 
 `hiiire-web` rejects a configuration containing both `TELEGRAM_RELAY_URL` and `TELEGRAM_PROXY_URL`. Without either variable, it calls Telegram directly.
@@ -141,25 +143,27 @@ npm run telegram:webhook -- get
 
 The CLI reads `TELEGRAM_PROXY_URL`; use `--proxy-url <url>` only for a one-off override. Then verify `/start <token>` from a test account and send a test notification. To roll back to direct mode, remove `TELEGRAM_PROXY_URL` and redeploy. To switch to relay mode, remove `TELEGRAM_PROXY_URL`, configure both relay variables, redeploy, and move the webhook to `https://tg.hiiire.com/api/telegram/webhook`.
 
-### Реквизиты оператора (юридические страницы)
+### Operator details (legal pages)
 
-Реквизиты ИП / юрлица не хранятся в репозитории. Страницы `/terms`, `/privacy`, `/refund`, `/contact` и `/about` читают их из server-side env во время запроса (страницы рендерятся динамически, поэтому значения не нужны на этапе `docker build` / `npm run build`):
+The details of the sole proprietor or company that operates the service are not stored in the repository. The `/terms`, `/privacy`, `/refund`, `/contact` and `/about` pages read them from server-side env on each request. The pages are rendered dynamically, so the values are not needed at `docker build` / `npm run build` time:
 
 ```env
-LEGAL_OPERATOR_NAME=Индивидуальный предприниматель Иванов Иван Иванович   # required в production
-LEGAL_OPERATOR_INN=000000000000                                            # required в production
-LEGAL_OPERATOR_OGRN=000000000000000    # ОГРНИП (15 цифр) или ОГРН (13 цифр); подпись на странице выбирается по длине
-LEGAL_OPERATOR_REGISTRATION_DATE=01.01.2025                                # optional, показывается на /contact
+LEGAL_OPERATOR_NAME=Индивидуальный предприниматель Иванов Иван Иванович   # required in production
+LEGAL_OPERATOR_INN=000000000000                                            # required in production
+LEGAL_OPERATOR_OGRN=000000000000000    # ОГРНИП (15 digits) or ОГРН (13 digits); the label on the page is chosen by length
+LEGAL_OPERATOR_REGISTRATION_DATE=01.01.2025                                # optional, shown on /contact
 ```
 
-Если хотя бы одна обязательная переменная не задана, страницы открываются без блока реквизитов, а в production-логах web появляется ошибка `[legal] Operator requisites are not configured`. Публичная оферта и данные для платёжного провайдера должны содержать реквизиты, поэтому задайте переменные до деплоя.
+`LEGAL_OPERATOR_NAME` is shown on the pages as is, so write it in Russian, the language of the pages. `INN`, `OGRN` and `OGRNIP` are Russian tax and state registration numbers.
+
+If any required variable is missing, the pages render without the details block, and the web app logs `[legal] Operator requisites are not configured` in production. The public offer and the payment provider require these details, so set the variables before deploying.
 
 ### Robokassa billing (Starter/Professional)
 
-Для self-service checkout + webhook + recurring:
+For self-service checkout, the payment webhook and recurring payments:
 
 ```env
-ROBOKASSA_MERCHANT_LOGIN=...   # required (или legacy ROBOKASSA_LOGIN)
+ROBOKASSA_MERCHANT_LOGIN=...   # required (or legacy ROBOKASSA_LOGIN)
 ROBOKASSA_PASSWORD1=...        # required (checkout + recurring signature)
 ROBOKASSA_PASSWORD2=...        # required (ResultURL signature verify)
 CRON_SECRET=...                # required (/api/cron/billing-renewals)
@@ -172,13 +176,13 @@ ROBOKASSA_RECURRING_URL=https://auth.robokassa.ru/Merchant/Recurring
 ROBOKASSA_RECURRING_ENABLED=false # safe default until recurring service is activated in Robokassa cabinet
 ```
 
-После активации сервиса рекуррентных платежей в кабинете Robokassa переключите:
-- `ROBOKASSA_RECURRING_ENABLED=true`
-- выполните контрольный checkout + дождитесь успешного прохода `POST /api/cron/billing-renewals`
+After the recurring payments service is activated in the Robokassa account:
+- set `ROBOKASSA_RECURRING_ENABLED=true`;
+- make a test checkout and wait for a successful run of `POST /api/cron/billing-renewals`.
 
 ### Email notifications (Resend)
 
-Если используете email-уведомления и email-рассылку из админки (`/admin/broadcast`):
+If you use email notifications and email broadcasts from the admin panel (`/admin/broadcast`):
 
 ```env
 RESEND_API_KEY=re_...          # server-only
@@ -186,7 +190,7 @@ EMAIL_FROM=hiiire <noreply@yourdomain.com> # server-only
 EMAIL_OWNER_RECIPIENTS=owner1@yourdomain.com,owner2@yourdomain.com # server-only (owners alerts)
 ```
 
-Для relay mode после деплоя настройте webhook у Telegram на relay (один раз на окружение):
+In relay mode, register the Telegram webhook on the relay after deploying (once per environment):
 
 ```bash
 curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
@@ -194,28 +198,26 @@ curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
   -d "{\"url\":\"https://tg.hiiire.com/api/telegram/webhook\",\"secret_token\":\"$TELEGRAM_WEBHOOK_SECRET\",\"allowed_updates\":[\"message\"]}"
 ```
 
-Cron для биллинга/уведомлений выполняется системным cron на self-hosted
-Supabase VPS. Конфигурация лежит в `supabase/selfhost/`. Задачи вызывают:
-- `POST https://<your-host>/api/cron/billing-renewals` — recurring-платежи, daily retry, отключение `auto_renew` после grace.
-- `POST https://<your-host>/api/cron/plan-expiry` — уведомления об истечении тарифа.
+Billing and notification cron jobs run from the system cron on the self-hosted Supabase VPS. The configuration is in `supabase/selfhost/`. The jobs call:
+- `POST https://<your-host>/api/cron/billing-renewals`: recurring payments, daily retries, turning off `auto_renew` after the grace period.
+- `POST https://<your-host>/api/cron/plan-expiry`: plan expiry notifications.
 
-Cron запускается в `09:00 UTC`, использует `flock`, делает до трёх попыток и
-передаёт `x-cron-secret`, совпадающий с `CRON_SECRET` веб-приложения.
+Cron runs at `09:00 UTC`, uses `flock`, makes up to three attempts and sends `x-cron-secret`, which must match the web app's `CRON_SECRET`.
 
-> Примечание: `hiiire-web` и `hiiire-worker` **не общаются напрямую по HTTP** — они “стыкуются” через Supabase (Postgres):
-> - web создаёт кандидата и ставит job в `jobs_ai` (`/api/candidates`, `/api/jobs`, `/api/vacancies`)
-> - worker забирает job, вызывает Gemini, пишет `ai_analyses` + обновляет `candidates`, переводит job в `done/failed`
+> Note: `hiiire-web` and `hiiire-worker` **do not talk to each other over HTTP**; they connect through Supabase (Postgres):
+> - the web app creates the candidate and puts a job in `jobs_ai` (`/api/candidates`, `/api/jobs`, `/api/vacancies`);
+> - the worker claims the job, calls the AI provider, writes `ai_analyses`, updates `candidates` and marks the job `done` or `failed`.
 
 ---
 
-## 2) Timeweb Cloud App: `hiiire-worker` (очередь `jobs_ai`)
+## 2) Timeweb Cloud App: `hiiire-worker` (`jobs_ai` queue)
 
 ### Build / Start
 - **Build command**: `npm run worker:build`
 - **Start command**: `npm run worker:start`
 
-> Примечание: `npm run worker:start` запускает selfcheck (`preworker:start`), который прогоняет быстрые проверки санитайзера prompt injection.  
-> Selfcheck запускается из уже собранного `worker/dist` (без повторной сборки). Сборка происходит на шаге Build (`npm run worker:build`).
+> Note: `npm run worker:start` runs a selfcheck (`preworker:start`) with quick checks of the prompt injection sanitizer.
+> The selfcheck runs from the already built `worker/dist` without rebuilding. The build happens in the Build step (`npm run worker:build`).
 
 ### Environment variables
 
@@ -255,36 +257,36 @@ NEXT_PUBLIC_POSTHOG_KEY=phc_...
 NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-Если PostHog env задан в `hiiire-worker`, worker отправляет структурированные события `worker_started`, `ai_job_claimed`, `ai_job_completed`, `ai_job_failed`, `ai_job_requeued`, `ai_job_terminal_failed`, `hh_sync_failed`, а также unhandled errors. В события не передаются тексты резюме, описания вакансий, промпты, raw-ответы AI, HH tokens или raw HH payloads. Для `hh_sync_failed` допускаются только безопасные диагностические поля: тип ошибки, нормализованный HH path (`/resumes/:id`, `/negotiations/:id`), ключи query и pagination/status без provider ids.
+When PostHog env is set on `hiiire-worker`, the worker sends the structured events `worker_started`, `ai_job_claimed`, `ai_job_completed`, `ai_job_failed`, `ai_job_requeued`, `ai_job_terminal_failed`, `hh_sync_failed`, as well as unhandled errors. Events never include resume text, vacancy descriptions, prompts, raw AI responses, HH tokens or raw HH payloads. `hh_sync_failed` contains only safe diagnostic fields: the error type, the normalized HH path (`/resumes/:id`, `/negotiations/:id`), query keys and pagination/status, without provider ids.
 
-> Важно: если Gemini недоступен из вашего региона, это проявится именно в worker’е. В этом случае обеспечьте worker’у egress через VPN/proxy.
+> Important: if Gemini is not available in your region, the worker is where it shows up. In that case, route the worker's outbound traffic through a VPN or proxy.
 >
-> Практика: выбор локации приложения в панели (например, Amsterdam) **не гарантирует**, что исходящий IP (egress) будет гео-распознан Google как поддерживаемый.
-> - Для диагностики можно включить лог egress IP: `WORKER_LOG_EGRESS_IP=true` (worker при старте выведет публичный IP).
-> - Если видите `FAILED_PRECONDITION` / `User location is not supported...` — это **перманентная** ошибка доступности API (не лечится ретраями), нужно менять egress (другой хостинг/NAT/proxy в поддерживаемой стране) или менять AI-провайдера.
+> In practice, choosing an app location in the panel (for example, Amsterdam) **does not guarantee** that Google will recognise the outbound (egress) IP as being in a supported region.
+> - For diagnostics, enable egress IP logging: `WORKER_LOG_EGRESS_IP=true` (the worker prints its public IP on start).
+> - `FAILED_PRECONDITION` / `User location is not supported...` is a **permanent** API availability error that retries do not fix. Change the egress (another host, NAT or a proxy in a supported country) or switch the AI provider.
 
 ---
 
 ## 3) Timeweb Cloud App: `hiiire-tika` (resume extraction)
 
-`hiiire-tika` разворачивается как отдельное приложение Timeweb типа **Docker → Docker Compose**.
+`hiiire-tika` is deployed as a separate Timeweb app of type **Docker → Docker Compose**.
 
-Состав:
+It consists of:
 
-- первый сервис в `docker-compose.yml`: защищённый Node/Fastify proxy;
-- второй сервис: `apache/tika:${TIKA_IMAGE_TAG:-3.2.3.0}`;
-- наружу публикуется только proxy;
-- контейнер `apache/tika` не должен быть доступен напрямую из интернета.
+- the first service in `docker-compose.yml`: the protected Node/Fastify proxy;
+- the second service: `apache/tika:${TIKA_IMAGE_TAG:-3.2.3.0}`;
+- only the proxy is exposed;
+- the `apache/tika` container must not be reachable directly from the internet.
 
-Проверка auth должна быть привязана к Fastify route `onRequest` для `PUT /tika`, до парсинга body и upstream Tika, а не к raw URL string equality. `PUT /tika?probe=1` без auth должен возвращать `401`.
+The auth check must be attached to the Fastify route `onRequest` hook for `PUT /tika`, before body parsing and the upstream Tika call, rather than to a raw URL string comparison. `PUT /tika?probe=1` without auth must return `401`.
 
-Proxy принимает только resume content types: `application/pdf`, `application/msword`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `text/plain`. `application/octet-stream` разрешён только вместе с валидным `x-hiiire-file-kind` (`pdf|doc|docx|txt`); остальные или отсутствующие content-type возвращают безопасный `415`.
+The proxy accepts only resume content types: `application/pdf`, `application/msword`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `text/plain`. `application/octet-stream` is accepted only together with a valid `x-hiiire-file-kind` (`pdf|doc|docx|txt`); any other or missing content type returns a safe `415`.
 
-`GET /health` на proxy проверяет доступность upstream Tika через внутренний `TIKA_UPSTREAM_URL` и возвращает `503`, пока `apache/tika` ещё не готов. Это важно для Timeweb health/routing: публичным считается proxy, но он не должен выглядеть готовым раньше Tika.
+`GET /health` on the proxy checks the upstream Tika through the internal `TIKA_UPSTREAM_URL` and returns `503` until `apache/tika` is ready. This matters for Timeweb health checks and routing: the proxy is the public service, but it must not report ready before Tika is.
 
-Timeweb Docker Compose deploy читает файл **`docker-compose.yml` из корня репозитория**. Поэтому Tika branch/deploy содержит корневой `docker-compose.yml`, предназначенный только для отдельного Tika App.
+Timeweb Docker Compose deployments read **`docker-compose.yml` from the repository root**. That is why the root `docker-compose.yml` exists and is dedicated to the separate Tika app.
 
-Важное ограничение: текущие `hiiire-web` и `hiiire-worker` не должны переводиться на Docker Compose в рамках этого rollout. Если в будущем UI или worker тоже будут деплоиться через Docker Compose, нужно заранее изменить deployment layout, чтобы один корневой `docker-compose.yml` не конфликтовал между Tika App и web/worker compose-деплоем.
+Important constraint: `hiiire-web` and `hiiire-worker` must not be moved to Docker Compose as part of this setup. If the UI or the worker is ever deployed with Docker Compose too, change the deployment layout first, so that a single root `docker-compose.yml` does not conflict between the Tika app and a web/worker compose deployment.
 
 ### Environment variables
 
@@ -301,16 +303,16 @@ NODE_ENV=production
 
 ### Observability
 
-Proxy пишет one-line structured JSON logs в stdout и отправляет в PostHog только безопасную агрегированную telemetry. PostHog не используется как сырой лог-дамп.
+The proxy writes one-line structured JSON logs to stdout and sends only safe aggregated telemetry to PostHog. PostHog is not used as a raw log dump.
 
-В telemetry/logs нельзя отправлять:
+Never send to telemetry or logs:
 
-- текст резюме;
-- bytes оригинального файла;
-- извлечённый текст;
-- контакты кандидата;
-- имя файла;
-- raw Tika response;
+- resume text;
+- the bytes of the original file;
+- extracted text;
+- candidate contacts;
+- the file name;
+- the raw Tika response;
 - request headers;
 - authorization headers;
 - auth tokens;
@@ -318,9 +320,9 @@ Proxy пишет one-line structured JSON logs в stdout и отправляет
 - provider payloads;
 - request/response bodies.
 
-`hiiire-tika` env не должен содержать Supabase, LLM/provider или worker secrets. Proxy нужен только для auth, forwarding в `apache/tika`, structured logs и безопасной telemetry.
+The `hiiire-tika` env must not contain Supabase, LLM/provider or worker secrets. The proxy exists only for auth, forwarding to `apache/tika`, structured logs and safe telemetry.
 
-Ошибки сводятся к безопасным классам: `timeout`, `unauthorized`, `unsupported_content_type`, `upstream_error`, `upstream_response_too_large`, `network_error`.
+Errors are reduced to safe classes: `timeout`, `unauthorized`, `unsupported_content_type`, `upstream_error`, `upstream_response_too_large`, `network_error`.
 
 ---
 
@@ -377,7 +379,7 @@ TELEGRAM_RELAY_SECRET=...
 TELEGRAM_REQUEST_TIMEOUT_MS=8000
 ```
 
-Для proxy mode используйте `npm run telegram:webhook -- set --url https://hiiire.com/api/telegram/webhook`, как описано выше. Для direct mode тот же URL можно зарегистрировать CLI без `TELEGRAM_PROXY_URL`.
+For proxy mode, use `npm run telegram:webhook -- set --url https://hiiire.com/api/telegram/webhook` as described above. For direct mode, the CLI can register the same URL without `TELEGRAM_PROXY_URL`.
 
 Do not set `TELEGRAM_PROXY_URL` in relay mode. Relay and proxy are explicit, mutually exclusive transports.
 
@@ -397,32 +399,28 @@ Rollback:
 
 ---
 
-## 5) CI/CD по коммитам
+## 5) Deploy on push
 
-Timeweb Cloud App можно настроить так, чтобы нужные приложения автоматически пересобирались при push в выбранную ветку. Для `hiiire-tika` автодеплой должен смотреть на ветку/коммит, где есть корневой `docker-compose.yml` для Tika App.
+Timeweb Cloud App can rebuild the selected apps automatically on every push to a chosen branch. For `hiiire-tika`, auto-deploy must track a branch or commit that contains the root `docker-compose.yml` for the Tika app.
 
 ---
 
-## 6) База данных
+## 6) Database
 
-Production использует self-hosted Supabase (Postgres + Auth + RLS + Storage)
-по адресу `https://supabase.hiiire.com`. Инструкция по подключению web, worker,
-Telegram relay, Auth SMTP/templates и cron находится в
-`supabase/selfhost/README.md`.
+Production uses self-hosted Supabase (Postgres + Auth + RLS + Storage) at `https://supabase.hiiire.com`. How to connect the web app, the worker, the Telegram relay, Auth SMTP/templates and cron is described in `supabase/selfhost/README.md`.
 
 ### Async AI queue (jobs_ai)
 
-- В production self-hosted Supabase это применено recovery bootstrap вместе с
-  актуальными queue/RPC-миграциями:
-  - создана таблица `public.jobs_ai` (новая схема)
-  - созданы RPC: `public.claim_next_ai_job(worker_id)` и `public.finalize_ai_job(...)`
-  - старая таблица (если была) сохранена как `public.jobs_ai_legacy`
-- Для нового окружения/проекта используйте SQL: `supabase/sql/ai_jobs.sql`
+- In the production self-hosted Supabase this was applied by the recovery bootstrap together with the current queue and RPC migrations:
+  - the `public.jobs_ai` table (new schema) was created;
+  - the RPCs `public.claim_next_ai_job(worker_id)` and `public.finalize_ai_job(...)` were created;
+  - the old table, if any, was kept as `public.jobs_ai_legacy`.
+- For a new environment or project, use the SQL in `supabase/sql/ai_jobs.sql`.
 
 ### Candidate profile parser usage accounting
 
-- Parser предзаполнения карточки кандидата работает в web/API route и по умолчанию использует DeepSeek `deepseek-v4-flash`; worker AI-анализ резюме остаётся без изменений.
-- Если DeepSeek недоступен, превышает deadline или возвращает неподходящий ответ, создание кандидата продолжается через regex fallback.
-- Concurrency defaults: UI запускает до 3 добавлений одновременно, web parser допускает до 1000 parser-запросов на один web-инстанс, ожидание parser queue — 3 секунды.
-- Для нового окружения/проекта примените `supabase/sql/ai_usage_events.sql` через Supabase MCP после проверки `project_ref` и `NEXT_PUBLIC_SUPABASE_URL`.
-- `public.ai_usage_events` хранит только безопасный usage accounting: ids, task/provider/model/status, attempts, token totals, duration and fallback reason. В таблице нет prompt/resume/raw output/contact/name/position/idempotency key/hash/provider payload/header/API key fields.
+- The candidate card prefill parser runs in a web/API route and uses DeepSeek `deepseek-v4-flash` by default; the worker's resume analysis is unchanged.
+- If DeepSeek is unavailable, misses the deadline or returns an unusable response, candidate creation continues with the regex fallback.
+- Concurrency defaults: the UI runs up to 3 additions at once, the web parser allows up to 1000 parser requests per web instance, and the parser queue wait is 3 seconds.
+- For a new environment or project, apply `supabase/sql/ai_usage_events.sql` through Supabase MCP after checking `project_ref` and `NEXT_PUBLIC_SUPABASE_URL`.
+- `public.ai_usage_events` stores only safe usage accounting: ids, task/provider/model/status, attempts, token totals, duration and fallback reason. The table has no prompt, resume, raw output, contact, name, position, idempotency key/hash, provider payload, header or API key fields.

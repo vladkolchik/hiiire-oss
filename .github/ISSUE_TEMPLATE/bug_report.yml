@@ -1,52 +1,53 @@
-name: Баг
-description: Что-то работает не так, как ожидалось
+name: Bug report
+description: Something does not work as expected
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Уязвимости не публикуйте здесь — см. SECURITY.md.
-        Не прикладывайте реальные персональные данные кандидатов, токены и содержимое `.env`.
+        Do not report vulnerabilities here; see SECURITY.md.
+        Do not attach real candidate personal data, tokens or `.env` contents.
+        You can write in English or Russian.
   - type: textarea
     id: what
     attributes:
-      label: Что произошло
-      description: Коротко опишите проблему.
+      label: What happened
+      description: Briefly describe the problem.
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Шаги воспроизведения
+      label: Steps to reproduce
       placeholder: |
-        1. Открыть /dashboard/candidates
-        2. Нажать «Добавить кандидата»
+        1. Open /dashboard/candidates
+        2. Click "Добавить кандидата" (Add candidate)
         3. ...
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Ожидаемое и фактическое поведение
+      label: Expected and actual behaviour
     validations:
       required: true
   - type: dropdown
     id: where
     attributes:
-      label: Где воспроизводится
+      label: Where it happens
       options:
         - hiiire.com
-        - Своя (self-hosted) инсталляция
-        - Локальная разработка
+        - Self-hosted installation
+        - Local development
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Commit / версия
-      description: Для self-hosted и локальной разработки — хеш коммита.
+      label: Commit / version
+      description: For self-hosted installations and local development, the commit hash.
   - type: textarea
     id: env
     attributes:
-      label: Окружение и логи
-      description: Браузер / устройство, ошибки из консоли или Network (без секретов), скриншоты.
+      label: Environment and logs
+      description: Browser and device, console or Network errors (without secrets), screenshots.

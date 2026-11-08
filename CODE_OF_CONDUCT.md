@@ -1,13 +1,15 @@
-# Кодекс поведения
+# Code of Conduct
 
-Проект hiiire следует [Contributor Covenant 2.1](https://www.contributor-covenant.org/ru/version/2/1/code_of_conduct/) — этот документ является частью правил участия в проекте.
+**English** | [Русский](./CODE_OF_CONDUCT.ru.md)
 
-Коротко:
+The hiiire project follows the [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). That document is part of the rules for taking part in the project.
 
-- уважайте других участников, их время и опыт; критикуйте код и решения, а не людей;
-- недопустимы оскорбления, домогательства, дискриминация, публикация чужих личных данных и любое поведение, неуместное в профессиональной среде;
-- правила действуют во всех пространствах проекта: issues, pull request'ы, обсуждения, ревью и личные сообщения, связанные с проектом.
+In short:
 
-## Как сообщить о нарушении
+- respect other participants, their time and experience; criticise code and decisions, not people;
+- insults, harassment, discrimination, publishing other people's personal data and any behaviour inappropriate in a professional setting are not acceptable;
+- these rules apply in all project spaces: issues, pull requests, discussions, reviews and private messages related to the project.
 
-Напишите на **inbox@hiiire.com** с темой `Code of Conduct`. Обращения рассматриваются конфиденциально. Меры — от предупреждения до блокировки в репозитории — принимаются в соответствии с разделом «Enforcement Guidelines» Contributor Covenant 2.1.
+## Reporting a violation
+
+Email **inbox@hiiire.com** with the subject `Code of Conduct`. Reports are handled confidentially. Measures, from a warning to a ban from the repository, are taken according to the Enforcement Guidelines of the Contributor Covenant 2.1.

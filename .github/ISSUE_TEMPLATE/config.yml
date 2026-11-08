@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Сообщить об уязвимости
+  - name: Report a security vulnerability
     url: https://github.com/vladkolchik/hiiire-oss/security/advisories/new
-    about: Уязвимости не публикуйте в issues — отправьте приватный отчёт (см. SECURITY.md).
+    about: Do not disclose vulnerabilities in issues. Send a private report instead (see SECURITY.md).

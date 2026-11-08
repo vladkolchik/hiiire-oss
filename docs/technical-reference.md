@@ -351,7 +351,7 @@ endpoint.
 Логи пишутся в `/var/log/hiiire-production-cron.log`. Секрет хранится отдельно
 в `/opt/hiiire-cron/secret.env` с правами `0600`, а не в crontab.
 
-Подробности деплоя и cron — в [`DEPLOYMENT.md`](../DEPLOYMENT.md).
+Подробности деплоя и cron — в [`DEPLOYMENT.ru.md`](../DEPLOYMENT.ru.md).
 
 Подсказка: можно сгенерировать секрет в PowerShell:
 
@@ -459,7 +459,7 @@ cp .env.example .env.local
 
 Для локальной разработки нужен настроенный Supabase-проект и переменные из `.env.example`.
 
-Реквизиты оператора сервиса для юридических страниц (`/terms`, `/privacy`, `/refund`, `/contact`, `/about`) не хранятся в репозитории и задаются через `LEGAL_OPERATOR_NAME`, `LEGAL_OPERATOR_INN`, `LEGAL_OPERATOR_OGRN` (и необязательный `LEGAL_OPERATOR_REGISTRATION_DATE`). Локально их можно не задавать: страницы откроются без блока реквизитов. В production они обязательны — см. [DEPLOYMENT.md](../DEPLOYMENT.md#реквизиты-оператора-юридические-страницы).
+Реквизиты оператора сервиса для юридических страниц (`/terms`, `/privacy`, `/refund`, `/contact`, `/about`) не хранятся в репозитории и задаются через `LEGAL_OPERATOR_NAME`, `LEGAL_OPERATOR_INN`, `LEGAL_OPERATOR_OGRN` (и необязательный `LEGAL_OPERATOR_REGISTRATION_DATE`). Локально их можно не задавать: страницы откроются без блока реквизитов. В production они обязательны — см. [DEPLOYMENT.ru.md](../DEPLOYMENT.ru.md#реквизиты-оператора-юридические-страницы).
 
 Для режима Supabase + real AI (async):
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -760,7 +760,7 @@ npm run worker:start
 
 ### Основная документация
 - [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) - Схема базы данных
-- [DEPLOYMENT.md](../DEPLOYMENT.md) - Деплой на Timeweb Cloud App (web + worker + Tika extractor)
+- [DEPLOYMENT.ru.md](../DEPLOYMENT.ru.md) - Деплой на Timeweb Cloud App (web + worker + Tika extractor)
 
 ### Структура проекта
 
@@ -1687,7 +1687,7 @@ POSTHOG_SERVICE_NAME=tika-proxy
 
 Для сохранения оригинальных `.doc` резюме private bucket `resumes` в Supabase Storage должен разрешать `application/msword` в `allowed_mime_types`. Это изменение применяется только через Supabase MCP после проверки, что MCP `project_ref` совпадает с проектом из `NEXT_PUBLIC_SUPABASE_URL`.
 
-Инструкции: [`DEPLOYMENT.md`](../DEPLOYMENT.md)
+Инструкции: [`DEPLOYMENT.ru.md`](../DEPLOYMENT.ru.md)
 
 ---
 

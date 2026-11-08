@@ -1,21 +1,24 @@
-name: Предложение
-description: Идея новой функции или улучшения
+name: Feature request
+description: An idea for a new feature or improvement
 labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: You can write in English or Russian.
   - type: textarea
     id: problem
     attributes:
-      label: Какую задачу это решает
-      description: Опишите сценарий HR / рекрутера и что мешает сейчас.
+      label: What problem does it solve
+      description: Describe the HR or recruiter scenario and what gets in the way today.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Предлагаемое решение
+      label: Proposed solution
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Альтернативы, которые вы рассматривали
+      label: Alternatives you considered

@@ -45,9 +45,9 @@ test("normalizeCandidateContactForStorage accepts DeepSeek-like contacts through
     type: "phone",
     value: "+79991112233",
   });
-  assert.deepEqual(normalizeCandidateContactForStorage({ type: "telegram", value: "vladkolchik" }), {
+  assert.deepEqual(normalizeCandidateContactForStorage({ type: "telegram", value: "ivan_recruiter" }), {
     type: "telegram",
-    value: "@vladkolchik",
+    value: "@ivan_recruiter",
   });
 });
 
@@ -79,7 +79,7 @@ test("normalizeCandidateContactForStorage stays compatible with regex contact no
   const resume = [
     "Email: USER@Example.COM",
     "Phone: 8 (999) 111-22-33",
-    "Telegram: https://t.me/vladkolchik",
+    "Telegram: https://t.me/ivan_recruiter",
     "WhatsApp: https://wa.me/79991112233",
     "LinkedIn: linkedin.com/in/dev",
     "GitHub: github.com/dev",
@@ -88,7 +88,7 @@ test("normalizeCandidateContactForStorage stays compatible with regex contact no
   const modelContacts = [
     { type: "email", value: "USER@Example.COM" },
     { type: "phone", value: "8 (999) 111-22-33" },
-    { type: "telegram", value: "https://t.me/vladkolchik" },
+    { type: "telegram", value: "https://t.me/ivan_recruiter" },
     { type: "whatsapp", value: "https://wa.me/79991112233" },
     { type: "linkedin", value: "linkedin.com/in/dev" },
     { type: "github", value: "github.com/dev" },
@@ -120,8 +120,8 @@ test("normalizeCandidateContactForStorage matches regex extractor edge cases", (
     expected("Phone: +7 (999) 111-22-33", "phone"),
   );
   assert.deepEqual(
-    normalizeCandidateContactForStorage({ type: "telegram", value: "https://t.me/s/vladkolchik" }),
-    expected("Telegram: https://t.me/s/vladkolchik", "telegram"),
+    normalizeCandidateContactForStorage({ type: "telegram", value: "https://t.me/s/ivan_recruiter" }),
+    expected("Telegram: https://t.me/s/ivan_recruiter", "telegram"),
   );
   assert.deepEqual(
     normalizeCandidateContactForStorage({ type: "telegram", value: "https://t.me/+inviteCode" }),
@@ -142,10 +142,10 @@ test("normalizeCandidateContactForStorage matches regex extractor edge cases", (
 });
 
 test("regex contact extraction behavior remains available for fallback", () => {
-  const contacts = extractCandidateContactsFromText("Email: user@example.com\nТелефон: +7 999 111-22-33\nTelegram: vladkolchik");
+  const contacts = extractCandidateContactsFromText("Email: user@example.com\nТелефон: +7 999 111-22-33\nTelegram: ivan_recruiter");
   assert.deepEqual(
     contacts.map((c) => `${c.type}:${c.value}`),
-    ["email:user@example.com", "telegram:@vladkolchik", "phone:+79991112233"],
+    ["email:user@example.com", "telegram:@ivan_recruiter", "phone:+79991112233"],
   );
 });
 
