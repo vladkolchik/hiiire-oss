@@ -20,7 +20,7 @@ npm run dev                  # http://localhost:3000
 
 - Схема БД для пустого проекта собирается из `supabase/migrations/` — порядок и детали в [`supabase/bootstrap/README.md`](./supabase/bootstrap/README.md).
 - Фоновая обработка AI-задач — отдельный процесс: `npm run worker:build && npm run worker:start`.
-- Интеграции (HH.ru, AI-провайдеры, Telegram, Robokassa, Tika, PostHog) необязательны для старта: без ключей соответствующие функции просто недоступны. Полный список переменных — в [`.env.example`](./.env.example), подробности — в [README](./README.md) и [DEPLOYMENT.md](./DEPLOYMENT.md).
+- Интеграции (HH.ru, AI-провайдеры, Telegram, Robokassa, Tika, PostHog) необязательны для старта: без ключей соответствующие функции просто недоступны. Полный список переменных — в [`.env.example`](./.env.example), подробности — в [техническом справочнике](./docs/technical-reference.md) и [DEPLOYMENT.md](./DEPLOYMENT.md).
 - Никогда не подключайте локальную сборку к чужой production-базе и не коммитьте `.env*` с реальными значениями.
 
 ## Ветки и pull request'ы
@@ -52,7 +52,7 @@ npm run build
   - ошибки API разбираются общим helper'ом проекта, а не локальным `throw new Error(json.error)`.
 - **Вёрстка:** длинный пользовательский текст защищается через `min-w-0` / `truncate` / `break-words`; повторяющиеся дефекты UI исправляются в примитивах `components/ui/*`.
 - **База данных:** изменения схемы — только новой миграцией в `supabase/migrations/` (уже применённые миграции не редактируются), с обновлением [`docs/DATABASE_SCHEMA.md`](./docs/DATABASE_SCHEMA.md) и типов `lib/supabase/database.types.ts`.
-- **Документация:** если изменилось поведение, API, конфигурация или переменные окружения, обновите `README.md` / `DEPLOYMENT.md` / `.env.example`. Пользовательские сценарии для ручного QA описываются в [`docs/For_juniors/hiiire_for_junior.md`](./docs/For_juniors/hiiire_for_junior.md) языком видимого UI, URL и HTTP-статусов, без ссылок на внутренние функции.
+- **Документация:** если изменилось поведение, API, конфигурация или переменные окружения, обновите [технический справочник](./docs/technical-reference.md), `DEPLOYMENT.md` и `.env.example`; если изменение заметно в обзоре проекта (возможности, быстрый старт, минимальные переменные), поправьте оба README — `README.md` (английский) и `README.ru.md` (русский). Пользовательские сценарии для ручного QA описываются в [`docs/For_juniors/hiiire_for_junior.md`](./docs/For_juniors/hiiire_for_junior.md) языком видимого UI, URL и HTTP-статусов, без ссылок на внутренние функции.
 
 ## Лицензия вкладов
 

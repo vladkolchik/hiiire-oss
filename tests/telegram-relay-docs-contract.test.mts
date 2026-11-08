@@ -26,8 +26,8 @@ test("env example documents relay and proxy variables for the main web app", () 
   assert.doesNotMatch(source, /^TELEGRAM_PROXY_URL=/m);
 });
 
-test("README documents Telegram relay and proxy deployment", () => {
-  const source = readFileSync("README.md", "utf8");
+test("technical reference documents Telegram relay and proxy deployment", () => {
+  const source = readFileSync("docs/technical-reference.md", "utf8");
 
   assert.match(source, /tg\.hiiire\.com/);
   assert.match(source, /telegram-relay/);
@@ -35,14 +35,14 @@ test("README documents Telegram relay and proxy deployment", () => {
   assert.match(source, /TELEGRAM_RELAY_SECRET/);
   assert.match(source, /TELEGRAM_PROXY_URL/);
   assert.match(source, /HTTP\(S\) forward proxy/);
-  assert.match(source, /must remain publicly reachable by Telegram over HTTPS/);
-  assert.match(source, /SOCKS proxy URLs are not supported/);
-  assert.match(source, /Do not configure relay and proxy mode at the same time/);
+  assert.match(source, /должен оставаться публично доступным для Telegram по HTTPS/);
+  assert.match(source, /SOCKS-прокси не поддерживаются/);
+  assert.match(source, /Не включайте relay и proxy одновременно/);
   assert.match(source, /TELEGRAM_REQUEST_TIMEOUT_MS/);
   assert.match(source, /telegram:webhook/);
   assert.match(source, /scripts\/telegram-webhook\.html/);
   assert.match(source, /https:\/\/tg\.hiiire\.com\/api\/telegram\/webhook/);
-  assert.match(source, /Rollback[\s\S]*https:\/\/hiiire\.com\/api\/telegram\/webhook/);
+  assert.match(source, /Откат[\s\S]*https:\/\/hiiire\.com\/api\/telegram\/webhook/);
 });
 
 test("deployment guide documents Telegram relay and proxy operations", () => {

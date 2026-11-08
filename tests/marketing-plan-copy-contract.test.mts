@@ -6,7 +6,7 @@ const pricingSource = readFileSync("components/landing/pricing.tsx", "utf8");
 const hrAssistantPromoSource = readFileSync("components/landing/hr-assistant-promo.tsx", "utf8");
 const settingsSource = readFileSync("app/(dashboard)/dashboard/settings/page.tsx", "utf8");
 const landingPageSource = readFileSync("app/(marketing)/page.tsx", "utf8");
-const readmeSource = readFileSync("README.md", "utf8");
+const readmeSource = readFileSync("docs/technical-reference.md", "utf8");
 // Internal docs helper; it is not shipped in the public open-source export.
 const updateDocsSource = existsSync("_update_docs.ps1") ? readFileSync("_update_docs.ps1", "utf8") : null;
 
@@ -73,7 +73,7 @@ test("landing page promotes HR assistant before internal responses", () => {
   assert.match(landingPageSource, /<HrAssistantPromo \/>[\s\S]*<InternalPortals \/>/);
 });
 
-test("README and docs updater preserve the current public pricing contract", () => {
+test("technical reference and docs updater preserve the current public pricing contract", () => {
   const sources = updateDocsSource ? [readmeSource, normalizePowerShellGeneratedText(updateDocsSource)] : [readmeSource];
   for (const source of sources) {
     assert.match(source, /Starter[\s\S]*500 AI-запросов[\s\S]*HR-ассистент/);
@@ -86,7 +86,7 @@ test("README and docs updater preserve the current public pricing contract", () 
   if (!updateDocsSource) return;
 
   assert.match(updateDocsSource, /\$repoRoot\s*=\s*\$PSScriptRoot/);
-  assert.match(updateDocsSource, /Join-Path \$repoRoot "README\.md"/);
+  assert.match(updateDocsSource, /Join-Path \$repoRoot "docs\\technical-reference\.md"/);
   assert.match(updateDocsSource, /Join-Path \$repoRoot "docs\\DATABASE_SCHEMA\.md"/);
   assert.doesNotMatch(updateDocsSource, /\b[A-Za-z]:\\/, "docs updater must not hardcode absolute Windows paths");
   assert.doesNotMatch(updateDocsSource, /тарифные планы с 7-дневным пробным периодом/);

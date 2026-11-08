@@ -51,7 +51,7 @@ test("user type carries company id for analytics without changing display copy",
 });
 
 test("docs mention PostHog identify for authenticated product analytics", () => {
-  const readme = readFileSync("README.md", "utf8");
+  const readme = readFileSync("docs/technical-reference.md", "utf8");
 
   assert.match(readme, /posthog\.identify/);
   assert.match(readme, /user\.id/);

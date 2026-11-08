@@ -14,7 +14,7 @@ const endRoute = readFileSync(
 
 const databaseTypes = readFileSync(new URL("../lib/supabase/database.types.ts", import.meta.url), "utf8");
 const enterpriseBilling = readFileSync(new URL("../lib/billing/enterprise-billing.ts", import.meta.url), "utf8");
-const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+const readme = readFileSync(new URL("../docs/technical-reference.md", import.meta.url), "utf8");
 const databaseSchemaDocs = readFileSync(new URL("../docs/DATABASE_SCHEMA.md", import.meta.url), "utf8");
 // Internal business doc; it is not shipped in the public open-source export.
 const landingFlowDocsUrl = new URL("../docs/landing-flow-and-pricing.md", import.meta.url);

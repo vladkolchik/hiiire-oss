@@ -15,7 +15,7 @@ import {
 
 const realtimeSql = readFileSync("supabase/sql/interviews_realtime_v1.sql", "utf8");
 const cleanupSql = readFileSync("supabase/sql/interviews_rpc_cleanup_v1.sql", "utf8");
-const readme = readFileSync("README.md", "utf8");
+const readme = readFileSync("docs/technical-reference.md", "utf8");
 const calendarHook = readFileSync("hooks/use-calendar-realtime.ts", "utf8");
 
 test("calendar realtime migration uses private broadcast with generic payload", () => {
